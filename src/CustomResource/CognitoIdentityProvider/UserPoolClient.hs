@@ -13,6 +13,7 @@ import Numeric.Natural (Natural)
 
 import qualified Data.Aeson              as JSON
 import qualified Data.Aeson.Text         as JSON
+import qualified Data.Map.Strict         as Map
 import qualified Data.Text.Lazy          as Text
 import qualified Data.Text.Lazy.Encoding as Text
 
@@ -94,7 +95,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       :: RequestMetadata
       -> UserPoolClient 'New -> AWS Response
     createResource metadata UserPoolClient{..}
-      = fromRequest metadata mkPhysicalResourceId
+      = fromRequest metadata mkPhysicalResourceId (mkResponseData <=< view cupcrsUserPoolClient)
       $ createUserPoolClient userPoolId clientName
       & cupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
       & cupcAllowedOAuthScopes              .~ allowedOAuthScopes
@@ -112,12 +113,14 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
     mkPhysicalResourceId response =
       toPhysicalResourceId <$> (fromClient =<< view cupcrsUserPoolClient response)
 
-    fromClient :: UserPoolClientType -> Maybe ResourceId
-    fromClient client = tryCreate (client ^. upctUserPoolId) (client ^. upctClientId)
+      where
+        fromClient :: UserPoolClientType -> Maybe ResourceId
+        fromClient client
+          = tryCreate (client ^. upctUserPoolId) (client ^. upctClientId)
 
-    tryCreate :: Maybe Text -> Maybe Text -> Maybe ResourceId
-    tryCreate (Just userPoolId) (Just clientId) = pure ResourceId{..}
-    tryCreate _                 _               = empty
+        tryCreate :: Maybe Text -> Maybe Text -> Maybe ResourceId
+        tryCreate (Just userPoolId) (Just clientId) = pure ResourceId{..}
+        tryCreate _                 _               = empty
 
     deleteResource
       :: RequestMetadata
@@ -127,6 +130,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       fromRequest
         metadata
         (const . pure $ toPhysicalResourceId resourceId)
+        (const $ pure emptyResponseData)
         (deleteUserPoolClient userPoolId clientId)
 
     updateResource
@@ -141,7 +145,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       UserPoolClient{..}
       _oldProperties
         = require (resourceUserPoolId == userPoolId) "Updates to user pool id are not supported"
-        . fromRequest metadata (const . pure $ toPhysicalResourceId resourceId)
+        . fromRequest metadata (const . pure $ toPhysicalResourceId resourceId) (mkResponseData <=< view uupcrsUserPoolClient)
         $ updateUserPoolClient resourceUserPoolId resourceClientName
         & uupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
         & uupcAllowedOAuthScopes              .~ allowedOAuthScopes
@@ -156,3 +160,6 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
         & uupcWriteAttributes                 .~ writeAttributes
       where
         require bool message action = check metadata resourceId action message bool
+
+mkResponseData :: UserPoolClientType -> Maybe ResponseData
+mkResponseData client = ResponseData . Map.singleton "Id" <$> client ^. upctClientId

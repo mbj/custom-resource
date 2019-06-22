@@ -7,9 +7,11 @@ module CustomResource.Lambda
   , ResourceHandler(..)
   , ResourceType
   , Response
+  , ResponseData(..)
   , State(..)
   , ToPhysicalResourceId(..)
   , check
+  , emptyResponseData
   , fromRequest
   , mkRequestHandler
   , mkResourceType
@@ -224,7 +226,7 @@ handleRequest (RequestHandler handlers) request
       Create metadata _properties ->
         mkFailedResponse metadata unknownPhysicalResourceId reason
       Delete metadata physicalResourceId ->
-        pure $ mkResponse metadata SUCCESS physicalResourceId reason
+        pure $ mkResponse metadata SUCCESS physicalResourceId emptyResponseData reason
       Update metadata physicalResourceId _newProperties _oldProperties ->
         mkFailedResponse metadata physicalResourceId reason
 
@@ -259,12 +261,12 @@ mkResponse
   => RequestMetadata
   -> ResponseStatus
   -> a
+  -> ResponseData
   -> ResponseReason
   -> Response
-mkResponse RequestMetadata{..} status resourceId reason =
+mkResponse RequestMetadata{..} status resourceId data' reason =
  Response
    { noEcho             = False
-   , data'              = ResponseData Map.empty
    , physicalResourceId = toPhysicalResourceId resourceId
    , ..
    }
@@ -277,7 +279,7 @@ mkFailedResponse
   -> AWS Response
 mkFailedResponse metadata resourceId
   = pure
-  . mkResponse metadata FAILED resourceId
+  . mkResponse metadata FAILED resourceId emptyResponseData
   . ResponseReason
   . convertText
 
@@ -329,6 +331,7 @@ mkRequestHandler resourceType ResourceHandler{..} =
               metadata
               SUCCESS
               physicalResourceId
+              emptyResponseData
               (ResponseReason "Resource properties failed to parse, skipping delete")
         else
           withPhysicalResourceId
@@ -378,9 +381,10 @@ fromRequest
   :: forall a . AWSRequest a
   => RequestMetadata
   -> (Rs a -> Maybe PhysicalResourceId)
+  -> (Rs a -> Maybe ResponseData)
   -> a
   -> AWS Response
-fromRequest metadata mkPhysicalResourceId request =
+fromRequest metadata mkPhysicalResourceId mkData request =
   either
     (mkFailure . convertText . show)
     fromResponse =<< tryAny (send request)
@@ -389,19 +393,27 @@ fromRequest metadata mkPhysicalResourceId request =
     fromResponse response =
       maybe
         (mkFailure "Failed to obtain physical resource id after successful request")
-        (mkSuccess :: PhysicalResourceId -> AWS Response)
+        (withPhysicalResourceId response)
         (mkPhysicalResourceId response)
+
+    withPhysicalResourceId :: Rs a -> PhysicalResourceId -> AWS Response
+    withPhysicalResourceId response physicalResourceId =
+      maybe
+        (mkFailure "Failed to obtain response data after successful request")
+        (mkSuccess physicalResourceId)
+        (mkData response)
 
     mkFailure :: Text -> AWS Response
     mkFailure = mkFailedResponse metadata unknownPhysicalResourceId
 
-    mkSuccess :: PhysicalResourceId -> AWS Response
-    mkSuccess physicalResourceId =
-      pure $
-        mkResponse
+    mkSuccess :: PhysicalResourceId -> ResponseData -> AWS Response
+    mkSuccess physicalResourceId data'
+      = pure
+      $ mkResponse
           metadata
           SUCCESS
           physicalResourceId
+          data'
           (ResponseReason "SUCCESS")
 
 check
@@ -420,7 +432,11 @@ check metadata resourceId action message = \case
         metadata
         FAILED
         resourceId
+        emptyResponseData
         (ResponseReason message)
 
 mkResourceType :: Text -> ResourceType
 mkResourceType = ResourceType . ("Custom::" <>)
+
+emptyResponseData :: ResponseData
+emptyResponseData = ResponseData Map.empty
