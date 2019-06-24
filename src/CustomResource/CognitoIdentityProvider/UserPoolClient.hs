@@ -13,6 +13,7 @@ import Numeric.Natural (Natural)
 
 import qualified Data.Aeson              as JSON
 import qualified Data.Aeson.Text         as JSON
+import qualified Data.Aeson.Types        as JSON
 import qualified Data.Map.Strict         as Map
 import qualified Data.Text.Lazy          as Text
 import qualified Data.Text.Lazy.Encoding as Text
@@ -39,7 +40,10 @@ data UserPoolClient :: State -> * where
 instance JSON.FromJSON (UserPoolClient a) where
   parseJSON = JSON.withObject "UserPoolClient" $ \object -> do
     allowedOAuthFlowsUserPoolClient <-
-      object .:? "AllowedOAuthFlowsUserPoolClient"
+      JSON.explicitParseFieldMaybe
+        parseTextBool
+        object
+        "AllowedOAuthFlowsUserPoolClient"
     allowedOAuthScopes <-
       object .:? "AllowedOAuthScopes" .!= empty
     analyticsConfiguration <-
@@ -53,7 +57,10 @@ instance JSON.FromJSON (UserPoolClient a) where
     explicitAuthFlows <-
       object .:? "ExplicitAuthFlows" .!= empty
     generateSecret <-
-      object .:? "GenerateSecret"
+      JSON.explicitParseFieldMaybe
+        parseTextBool
+        object
+        "GenerateSecret"
     logoutURLs <-
       object .:? "LogoutURLs" .!= empty
     readAttributes <-
@@ -163,3 +170,9 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
 
 mkResponseData :: UserPoolClientType -> Maybe ResponseData
 mkResponseData client = ResponseData . Map.singleton "Id" <$> client ^. upctClientId
+
+parseTextBool :: JSON.Value -> JSON.Parser Bool
+parseTextBool = JSON.withText "text encoded bool" $ \case
+  "true"  -> pure True
+  "false" -> pure False
+  other   -> fail $ "unexpected: " <> show other
