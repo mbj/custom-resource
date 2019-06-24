@@ -2,20 +2,28 @@
 module CustomResource.Lambda
   ( FromPhysicalResourceId(..)
   , PhysicalResourceId(..)
+  , Request
   , RequestHandler
   , RequestMetadata(..)
   , ResourceHandler(..)
   , ResourceType
   , Response
   , ResponseData(..)
+  , ResponseDataEcho(..)
+  , ResponseReason(..)
+  , ResponseStatus(..)
   , State(..)
   , ToPhysicalResourceId(..)
   , check
   , emptyResponseData
-  , fromRequest
+  , mkFailedResponse
   , mkRequestHandler
   , mkResourceType
+  , mkResponse
+  , mkSuccessResponse
+  , requestMetadata
   , run
+  , unknownPhysicalResourceId
   )
 where
 
@@ -26,9 +34,7 @@ import Data.Aeson (FromJSON, ToJSON, (.:))
 import Data.Map.Strict (Map)
 import Data.String (String)
 import GHC.Generics (Generic)
-import Network.AWS.Types (Rs)
 import System.IO (IO)
-import UnliftIO.Exception (tryAny)
 
 import qualified AWS.Lambda.Runtime      as Lambda
 import qualified Data.Aeson              as JSON
@@ -176,10 +182,18 @@ newtype ResponseData = ResponseData (Map Text Text)
   deriving newtype ToJSON
   deriving stock   Show
 
+data ResponseDataEcho = Echo | NoEcho
+  deriving stock (Eq, Show)
+
+instance JSON.ToJSON ResponseDataEcho where
+  toJSON = \case
+    Echo   -> JSON.Bool False
+    NoEcho -> JSON.Bool True
+
 data Response = Response
   { data'              :: ResponseData
+  , echo               :: ResponseDataEcho
   , logicalResourceId  :: LogicalResourceId
-  , noEcho             :: Bool
   , physicalResourceId :: PhysicalResourceId
   , reason             :: ResponseReason
   , requestId          :: RequestId
@@ -192,7 +206,7 @@ instance ToJSON Response where
   toJSON Response{..} = JSON.object
     [ ("Data",               JSON.toJSON data')
     , ("LogicalResourceId",  JSON.toJSON logicalResourceId)
-    , ("NoEcho",             JSON.toJSON noEcho)
+    , ("NoEcho",             JSON.toJSON echo)
     , ("PhysicalResourceId", JSON.toJSON physicalResourceId)
     , ("Reason",             JSON.toJSON reason)
     , ("RequestId",          JSON.toJSON requestId)
@@ -226,7 +240,7 @@ handleRequest (RequestHandler handlers) request
       Create metadata _properties ->
         mkFailedResponse metadata unknownPhysicalResourceId reason
       Delete metadata physicalResourceId ->
-        pure $ mkResponse metadata SUCCESS physicalResourceId emptyResponseData reason
+        pure $ mkSuccessResponse metadata physicalResourceId
       Update metadata physicalResourceId _newProperties _oldProperties ->
         mkFailedResponse metadata physicalResourceId reason
 
@@ -262,14 +276,28 @@ mkResponse
   -> ResponseStatus
   -> a
   -> ResponseData
+  -> ResponseDataEcho
   -> ResponseReason
   -> Response
-mkResponse RequestMetadata{..} status resourceId data' reason =
+mkResponse RequestMetadata{..} status resourceId data' echo reason =
  Response
-   { noEcho             = False
-   , physicalResourceId = toPhysicalResourceId resourceId
+   { physicalResourceId = toPhysicalResourceId resourceId
    , ..
    }
+
+mkSuccessResponse
+  :: ToPhysicalResourceId a
+  => RequestMetadata
+  -> a
+  -> Response
+mkSuccessResponse metadata resourceId
+  = mkResponse
+    metadata
+    SUCCESS
+    resourceId
+    emptyResponseData
+    NoEcho
+    (ResponseReason "SUCCESS")
 
 mkFailedResponse
   :: (ToPhysicalResourceId a, ToText b)
@@ -279,7 +307,7 @@ mkFailedResponse
   -> AWS Response
 mkFailedResponse metadata resourceId
   = pure
-  . mkResponse metadata FAILED resourceId emptyResponseData
+  . mkResponse metadata FAILED resourceId emptyResponseData NoEcho
   . ResponseReason
   . convertText
 
@@ -332,6 +360,7 @@ mkRequestHandler resourceType ResourceHandler{..} =
               SUCCESS
               physicalResourceId
               emptyResponseData
+              NoEcho
               (ResponseReason "Resource properties failed to parse, skipping delete")
         else
           withPhysicalResourceId
@@ -377,45 +406,6 @@ mkRequestHandler resourceType ResourceHandler{..} =
     failResponse :: RequestMetadata -> PhysicalResourceId -> String -> AWS Response
     failResponse = mkFailedResponse
 
-fromRequest
-  :: forall a . AWSRequest a
-  => RequestMetadata
-  -> (Rs a -> Maybe PhysicalResourceId)
-  -> (Rs a -> Maybe ResponseData)
-  -> a
-  -> AWS Response
-fromRequest metadata mkPhysicalResourceId mkData request =
-  either
-    (mkFailure . convertText . show)
-    fromResponse =<< tryAny (send request)
-  where
-    fromResponse :: Rs a -> AWS Response
-    fromResponse response =
-      maybe
-        (mkFailure "Failed to obtain physical resource id after successful request")
-        (withPhysicalResourceId response)
-        (mkPhysicalResourceId response)
-
-    withPhysicalResourceId :: Rs a -> PhysicalResourceId -> AWS Response
-    withPhysicalResourceId response physicalResourceId =
-      maybe
-        (mkFailure "Failed to obtain response data after successful request")
-        (mkSuccess physicalResourceId)
-        (mkData response)
-
-    mkFailure :: Text -> AWS Response
-    mkFailure = mkFailedResponse metadata unknownPhysicalResourceId
-
-    mkSuccess :: PhysicalResourceId -> ResponseData -> AWS Response
-    mkSuccess physicalResourceId data'
-      = pure
-      $ mkResponse
-          metadata
-          SUCCESS
-          physicalResourceId
-          data'
-          (ResponseReason "SUCCESS")
-
 check
   :: ToPhysicalResourceId a
   => RequestMetadata
@@ -433,6 +423,7 @@ check metadata resourceId action message = \case
         FAILED
         resourceId
         emptyResponseData
+        NoEcho
         (ResponseReason message)
 
 mkResourceType :: Text -> ResourceType

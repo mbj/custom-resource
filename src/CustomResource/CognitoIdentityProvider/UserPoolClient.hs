@@ -1,5 +1,8 @@
+{-# LANGUAGE RankNTypes #-}
+
 module CustomResource.CognitoIdentityProvider.UserPoolClient (requestHandler) where
 
+import Control.Lens (Lens')
 import CustomResource.AWS
 import CustomResource.Lambda
 import CustomResource.Prelude
@@ -9,7 +12,9 @@ import Network.AWS.CognitoIdentityProvider.CreateUserPoolClient
 import Network.AWS.CognitoIdentityProvider.DeleteUserPoolClient
 import Network.AWS.CognitoIdentityProvider.Types
 import Network.AWS.CognitoIdentityProvider.UpdateUserPoolClient
+import Network.AWS.Types (Rs)
 import Numeric.Natural (Natural)
+import UnliftIO.Exception (tryAny)
 
 import qualified Data.Aeson              as JSON
 import qualified Data.Aeson.Text         as JSON
@@ -102,7 +107,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       :: RequestMetadata
       -> UserPoolClient 'New -> AWS Response
     createResource metadata UserPoolClient{..}
-      = fromRequest metadata mkPhysicalResourceId (mkResponseData <=< view cupcrsUserPoolClient)
+      = fromAWSRequest unknownPhysicalResourceId metadata (mkUserPoolResponse metadata cupcrsUserPoolClient)
       $ createUserPoolClient userPoolId clientName
       & cupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
       & cupcAllowedOAuthScopes              .~ allowedOAuthScopes
@@ -117,27 +122,15 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       & cupcSupportedIdentityProviders      .~ supportedIdentityProviders
       & cupcWriteAttributes                 .~ writeAttributes
 
-    mkPhysicalResourceId response =
-      toPhysicalResourceId <$> (fromClient =<< view cupcrsUserPoolClient response)
-
-      where
-        fromClient :: UserPoolClientType -> Maybe ResourceId
-        fromClient client
-          = tryCreate (client ^. upctUserPoolId) (client ^. upctClientId)
-
-        tryCreate :: Maybe Text -> Maybe Text -> Maybe ResourceId
-        tryCreate (Just userPoolId) (Just clientId) = pure ResourceId{..}
-        tryCreate _                 _               = empty
-
     deleteResource
       :: RequestMetadata
       -> ResourceId
       -> AWS Response
     deleteResource metadata resourceId@ResourceId{..} =
-      fromRequest
+      fromAWSRequest
+        resourceId
         metadata
-        (const . pure $ toPhysicalResourceId resourceId)
-        (const $ pure emptyResponseData)
+        (const . Right $ mkSuccessResponse metadata resourceId)
         (deleteUserPoolClient userPoolId clientId)
 
     updateResource
@@ -152,7 +145,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       UserPoolClient{..}
       _oldProperties
         = require (resourceUserPoolId == userPoolId) "Updates to user pool id are not supported"
-        . fromRequest metadata (const . pure $ toPhysicalResourceId resourceId) (mkResponseData <=< view uupcrsUserPoolClient)
+        . fromAWSRequest resourceId metadata (mkUserPoolResponse metadata uupcrsUserPoolClient)
         $ updateUserPoolClient resourceUserPoolId resourceClientName
         & uupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
         & uupcAllowedOAuthScopes              .~ allowedOAuthScopes
@@ -168,8 +161,44 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       where
         require bool message action = check metadata resourceId action message bool
 
-mkResponseData :: UserPoolClientType -> Maybe ResponseData
-mkResponseData client = ResponseData . Map.singleton "Id" <$> client ^. upctClientId
+mkUserPoolResponse
+  :: RequestMetadata
+  -> Lens' a (Maybe UserPoolClientType)
+  -> a
+  -> Either Text Response
+mkUserPoolResponse metadata lens response = do
+  userPoolClient <- try "No user pool client" $ view lens response
+  clientId       <- try "No client id"        $ userPoolClient ^. upctClientId
+  userPoolId     <- try "No user pool id"     $ userPoolClient ^. upctUserPoolId
+
+  Right $
+    mkResponse
+      metadata
+      SUCCESS
+      ResourceId{..}
+      (ResponseData $ Map.singleton "Id" clientId)
+      Echo
+      (ResponseReason "SUCCESS")
+
+  where
+    try :: Text -> Maybe a -> Either Text a
+    try message = maybe (Left message) Right
+fromAWSRequest
+  :: forall a b . (AWSRequest a, ToPhysicalResourceId b)
+  => b
+  -> RequestMetadata
+  -> (Rs a -> Either Text Response)
+  -> a
+  -> AWS Response
+fromAWSRequest resourceId metadata tryResponse awsRequest =
+  either
+    (mkFailure . convertText . show)
+    fromResponse =<< tryAny (send awsRequest)
+  where
+    fromResponse :: Rs a -> AWS Response
+    fromResponse = either mkFailure pure . tryResponse
+
+    mkFailure = mkFailedResponse metadata resourceId
 
 parseTextBool :: JSON.Value -> JSON.Parser Bool
 parseTextBool = JSON.withText "text encoded bool" $ \case
