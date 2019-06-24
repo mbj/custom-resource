@@ -7,6 +7,7 @@ import CustomResource.AWS
 import CustomResource.Lambda
 import CustomResource.Prelude
 import Data.Aeson ((.!=), (.:), (.:?))
+import Data.Map.Strict (Map)
 import GHC.Generics (Generic)
 import Network.AWS.CognitoIdentityProvider.CreateUserPoolClient
 import Network.AWS.CognitoIdentityProvider.DeleteUserPoolClient
@@ -176,13 +177,17 @@ mkUserPoolResponse metadata lens response = do
       metadata
       SUCCESS
       ResourceId{..}
-      (ResponseData $ Map.singleton "Id" clientId)
-      Echo
+      (ResponseData . addSecret (userPoolClient ^. upctClientSecret) $ Map.singleton "Id" clientId)
+      NoEcho
       (ResponseReason "SUCCESS")
 
   where
     try :: Text -> Maybe a -> Either Text a
     try message = maybe (Left message) Right
+
+    addSecret :: Maybe Text -> Map Text Text -> Map Text Text
+    addSecret = maybe identity (Map.insert "ClientSecret")
+
 fromAWSRequest
   :: forall a b . (AWSRequest a, ToPhysicalResourceId b)
   => b
