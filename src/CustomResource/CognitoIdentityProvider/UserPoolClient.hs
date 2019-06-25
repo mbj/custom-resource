@@ -143,24 +143,26 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
     updateResource
       metadata
       resourceId@(ResourceId resourceUserPoolId resourceClientName)
-      UserPoolClient{..}
+      newProperties@UserPoolClient{..}
       _oldProperties
-        = require (resourceUserPoolId == userPoolId) "Updates to user pool id are not supported"
-        . fromAWSRequest resourceId metadata (mkUserPoolResponse metadata uupcrsUserPoolClient)
-        $ updateUserPoolClient resourceUserPoolId resourceClientName
-        & uupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
-        & uupcAllowedOAuthScopes              .~ allowedOAuthScopes
-        & uupcAnalyticsConfiguration          .~ analyticsConfiguration
-        & uupcCallbackURLs                    .~ callbackURLs
-        & uupcDefaultRedirectURI              .~ defaultRedirectURI
-        & uupcExplicitAuthFlows               .~ explicitAuthFlows
-        & uupcLogoutURLs                      .~ logoutURLs
-        & uupcReadAttributes                  .~ readAttributes
-        & uupcRefreshTokenValidity            .~ refreshTokenValidility
-        & uupcSupportedIdentityProviders      .~ supportedIdentityProviders
-        & uupcWriteAttributes                 .~ writeAttributes
+        = if resourceUserPoolId == userPoolId
+            then performUpdate
+            else createResource metadata newProperties
       where
-        require bool message action = check metadata resourceId action message bool
+        performUpdate
+          = fromAWSRequest resourceId metadata (mkUserPoolResponse metadata uupcrsUserPoolClient)
+          $ updateUserPoolClient resourceUserPoolId resourceClientName
+          & uupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
+          & uupcAllowedOAuthScopes              .~ allowedOAuthScopes
+          & uupcAnalyticsConfiguration          .~ analyticsConfiguration
+          & uupcCallbackURLs                    .~ callbackURLs
+          & uupcDefaultRedirectURI              .~ defaultRedirectURI
+          & uupcExplicitAuthFlows               .~ explicitAuthFlows
+          & uupcLogoutURLs                      .~ logoutURLs
+          & uupcReadAttributes                  .~ readAttributes
+          & uupcRefreshTokenValidity            .~ refreshTokenValidility
+          & uupcSupportedIdentityProviders      .~ supportedIdentityProviders
+          & uupcWriteAttributes                 .~ writeAttributes
 
 mkUserPoolResponse
   :: RequestMetadata
