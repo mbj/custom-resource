@@ -142,7 +142,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       -> AWS Response
     updateResource
       metadata
-      resourceId@(ResourceId resourceUserPoolId resourceClientName)
+      resourceId@(ResourceId resourceClientId resourceUserPoolId)
       newProperties@UserPoolClient{..}
       _oldProperties
         = if resourceUserPoolId == userPoolId
@@ -151,7 +151,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       where
         performUpdate
           = fromAWSRequest resourceId metadata (mkUserPoolResponse metadata uupcrsUserPoolClient)
-          $ updateUserPoolClient resourceUserPoolId resourceClientName
+          $ updateUserPoolClient resourceUserPoolId resourceClientId
           & uupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
           & uupcAllowedOAuthScopes              .~ allowedOAuthScopes
           & uupcAnalyticsConfiguration          .~ analyticsConfiguration
