@@ -26,7 +26,8 @@ import qualified Data.Text.Lazy.Encoding as Text
 
 data UserPoolClient :: State -> * where
   UserPoolClient ::
-    { allowedOAuthFlowsUserPoolClient :: Maybe Bool
+    { allowedOAuthFlows               :: [OAuthFlowType]
+    , allowedOAuthFlowsUserPoolClient :: Maybe Bool
     , allowedOAuthScopes              :: [Text]
     , analyticsConfiguration          :: Maybe AnalyticsConfigurationType
     , callbackURLs                    :: [Text]
@@ -45,6 +46,8 @@ data UserPoolClient :: State -> * where
 
 instance JSON.FromJSON (UserPoolClient a) where
   parseJSON = JSON.withObject "UserPoolClient" $ \object -> do
+    allowedOAuthFlows <-
+      object .:? "AllowedOAuthFlows" .!= empty
     allowedOAuthFlowsUserPoolClient <-
       JSON.explicitParseFieldMaybe
         parseTextBool
@@ -110,8 +113,8 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
     createResource metadata UserPoolClient{..}
       = fromAWSRequest unknownPhysicalResourceId metadata (mkUserPoolResponse metadata cupcrsUserPoolClient)
       $ createUserPoolClient userPoolId clientName
+      & cupcAllowedOAuthFlows               .~ allowedOAuthFlows
       & cupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
-      & cupcAllowedOAuthScopes              .~ allowedOAuthScopes
       & cupcAnalyticsConfiguration          .~ analyticsConfiguration
       & cupcCallbackURLs                    .~ callbackURLs
       & cupcDefaultRedirectURI              .~ defaultRedirectURI
@@ -152,6 +155,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
         performUpdate
           = fromAWSRequest resourceId metadata (mkUserPoolResponse metadata uupcrsUserPoolClient)
           $ updateUserPoolClient resourceUserPoolId resourceClientId
+          & uupcAllowedOAuthFlows               .~ allowedOAuthFlows
           & uupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
           & uupcAllowedOAuthScopes              .~ allowedOAuthScopes
           & uupcAnalyticsConfiguration          .~ analyticsConfiguration
