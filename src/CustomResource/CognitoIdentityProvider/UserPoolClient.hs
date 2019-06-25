@@ -145,8 +145,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       resourceId@(ResourceId resourceUserPoolId resourceClientName)
       UserPoolClient{..}
       _oldProperties
-        = require (resourceUserPoolId == userPoolId) "Updates to user pool id are not supported"
-        . fromAWSRequest resourceId metadata (mkUserPoolResponse metadata uupcrsUserPoolClient)
+        = fromAWSRequest resourceId metadata (mkUserPoolResponse metadata uupcrsUserPoolClient)
         $ updateUserPoolClient resourceUserPoolId resourceClientName
         & uupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
         & uupcAllowedOAuthScopes              .~ allowedOAuthScopes
@@ -159,8 +158,6 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
         & uupcRefreshTokenValidity            .~ refreshTokenValidility
         & uupcSupportedIdentityProviders      .~ supportedIdentityProviders
         & uupcWriteAttributes                 .~ writeAttributes
-      where
-        require bool message action = check metadata resourceId action message bool
 
 mkUserPoolResponse
   :: RequestMetadata
