@@ -115,6 +115,7 @@ requestHandler = mkRequestHandler resourceType ResourceHandler{..}
       $ createUserPoolClient userPoolId clientName
       & cupcAllowedOAuthFlows               .~ allowedOAuthFlows
       & cupcAllowedOAuthFlowsUserPoolClient .~ allowedOAuthFlowsUserPoolClient
+      & cupcAllowedOAuthScopes              .~ allowedOAuthScopes
       & cupcAnalyticsConfiguration          .~ analyticsConfiguration
       & cupcCallbackURLs                    .~ callbackURLs
       & cupcDefaultRedirectURI              .~ defaultRedirectURI
