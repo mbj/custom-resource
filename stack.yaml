@@ -9,7 +9,7 @@ extra-deps:
    - amazonka-cloudformation
 - commit: 41d5f2e407561fba9269a3317e2bf607c562a468
   git: https://github.com/mbj/lambda-haskell-runtime
-- commit: 9ceec78602ed85de1a4b9e402b5aad680a1f6a98
+- commit: 792cda1dc3e51253264aa76eb984b932d428c683
   git: https://github.com/mbj/mprelude
 - commit: 8333f1c0d639b2bb68ae1d6f1fed4101e2d705ad
   git: https://github.com/mbj/stack-deploy
