@@ -37,17 +37,17 @@ packages:
 - completed:
     cabal-file:
       size: 3495
-      sha256: d3306465e1a0b77bd084cd9fa68203d48c938da5e46a1aa402d94fa2fdb7c0c9
+      sha256: b7234b78440d23b54f11bb7569226de9b11a576d0a098608484c6fb0b794bb31
     name: lambda-haskell-runtime
     version: 0.0.0.1
     git: https://github.com/mbj/lambda-haskell-runtime
     pantry-tree:
-      size: 520
-      sha256: b1e0087324f5dad07e346a7eb1a6d02e6878084c1ce53970d722e3af4a7cafea
-    commit: 41d5f2e407561fba9269a3317e2bf607c562a468
+      size: 576
+      sha256: 368044a142437a6993e3a58d499f21ab58d0e7aa2dea0fa8ed2f6795c9347a77
+    commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
   original:
     git: https://github.com/mbj/lambda-haskell-runtime
-    commit: 41d5f2e407561fba9269a3317e2bf607c562a468
+    commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
 - completed:
     cabal-file:
       size: 2328
@@ -92,7 +92,7 @@ packages:
     commit: c64f467f455f0632eeeb1efa81fa9739985136ad
 snapshots:
 - completed:
-    size: 499889
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/26.yaml
-    sha256: ecb02ee16829df8d7219e7d7fe6c310819820bf335b0b9534bce84d3ea896684
-  original: lts-13.26
+    size: 500539
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/28.yaml
+    sha256: cdde1bfb38fdee21c6acb73d506e78f7e12e0a73892adbbbe56374ebef4d3adf
+  original: lts-13.28

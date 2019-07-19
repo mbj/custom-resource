@@ -7,7 +7,7 @@ extra-deps:
   git: https://github.com/mbj/amazonka
   subdirs:
    - amazonka-cloudformation
-- commit: 41d5f2e407561fba9269a3317e2bf607c562a468
+- commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
   git: https://github.com/mbj/lambda-haskell-runtime
 - commit: 792cda1dc3e51253264aa76eb984b932d428c683
   git: https://github.com/mbj/mprelude
@@ -18,4 +18,4 @@ extra-deps:
 local-bin-path: bin
 packages:
 - .
-resolver: lts-13.26
+resolver: lts-13.28
