@@ -37,17 +37,17 @@ packages:
 - completed:
     cabal-file:
       size: 3495
-      sha256: d3306465e1a0b77bd084cd9fa68203d48c938da5e46a1aa402d94fa2fdb7c0c9
+      sha256: b7234b78440d23b54f11bb7569226de9b11a576d0a098608484c6fb0b794bb31
     name: lambda-haskell-runtime
     version: 0.0.0.1
     git: https://github.com/mbj/lambda-haskell-runtime
     pantry-tree:
-      size: 520
-      sha256: b1e0087324f5dad07e346a7eb1a6d02e6878084c1ce53970d722e3af4a7cafea
-    commit: 41d5f2e407561fba9269a3317e2bf607c562a468
+      size: 576
+      sha256: 368044a142437a6993e3a58d499f21ab58d0e7aa2dea0fa8ed2f6795c9347a77
+    commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
   original:
     git: https://github.com/mbj/lambda-haskell-runtime
-    commit: 41d5f2e407561fba9269a3317e2bf607c562a468
+    commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
 - completed:
     cabal-file:
       size: 2328
@@ -56,26 +56,26 @@ packages:
     version: 0.0.0.1
     git: https://github.com/mbj/mprelude
     pantry-tree:
-      size: 313
-      sha256: c674454a76a83b3b818d46e38e7117c6173061598b45ccccf21328c04693d091
-    commit: 9ceec78602ed85de1a4b9e402b5aad680a1f6a98
+      size: 368
+      sha256: e9a87046c7b161180f85d5be82f49d3ee0e50fe20cf07ee62b83a86b459d44d9
+    commit: 792cda1dc3e51253264aa76eb984b932d428c683
   original:
     git: https://github.com/mbj/mprelude
-    commit: 9ceec78602ed85de1a4b9e402b5aad680a1f6a98
+    commit: 792cda1dc3e51253264aa76eb984b932d428c683
 - completed:
     cabal-file:
-      size: 3382
-      sha256: 87a1f541a696eae81851726fe3ed3240e168fb9a0b790c2372763a7d86576941
+      size: 3656
+      sha256: c361c0eabc8252c24cd6aded38a7f8bf1cebc9290e7539a2042cbd2af8f139a9
     name: stack-deploy
     version: 0.0.0.1
     git: https://github.com/mbj/stack-deploy
     pantry-tree:
-      size: 835
-      sha256: bf8a98a6db1918a4a8f981584806717ecb838106a756002deb19ec8d77a50e9c
-    commit: 8333f1c0d639b2bb68ae1d6f1fed4101e2d705ad
+      size: 1027
+      sha256: cc67595855ddb5ce8972bd8b01be514d0314a4fd7f955f25729589bfbbaea592
+    commit: 012c382b2c83c9f734328e04b3e21ae7a6388f1f
   original:
     git: https://github.com/mbj/stack-deploy
-    commit: 8333f1c0d639b2bb68ae1d6f1fed4101e2d705ad
+    commit: 012c382b2c83c9f734328e04b3e21ae7a6388f1f
 - completed:
     cabal-file:
       size: 3161
@@ -84,15 +84,15 @@ packages:
     version: 0.0.0.1
     git: https://github.com/schirp-dso/source-constraints
     pantry-tree:
-      size: 859
-      sha256: a17dc190399e2b46581639591634bbd3f9f9dbde2cf1704062341f1e268d84f7
-    commit: 0eb2334866d0d7af0aa148b2ac0d0095531ed946
+      size: 914
+      sha256: 0720f9efebe01a5b7bc8e26e091fd26149015e8038d7c076d76d14fff6a1bb2f
+    commit: c64f467f455f0632eeeb1efa81fa9739985136ad
   original:
     git: https://github.com/schirp-dso/source-constraints
-    commit: 0eb2334866d0d7af0aa148b2ac0d0095531ed946
+    commit: c64f467f455f0632eeeb1efa81fa9739985136ad
 snapshots:
 - completed:
-    size: 499889
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/26.yaml
-    sha256: ecb02ee16829df8d7219e7d7fe6c310819820bf335b0b9534bce84d3ea896684
-  original: lts-13.26
+    size: 500539
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/28.yaml
+    sha256: cdde1bfb38fdee21c6acb73d506e78f7e12e0a73892adbbbe56374ebef4d3adf
+  original: lts-13.28
