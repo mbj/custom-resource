@@ -13,7 +13,7 @@ extra-deps:
   git: https://github.com/mbj/mprelude
 - commit: 8333f1c0d639b2bb68ae1d6f1fed4101e2d705ad
   git: https://github.com/mbj/stack-deploy
-- commit: 0eb2334866d0d7af0aa148b2ac0d0095531ed946
+- commit: c64f467f455f0632eeeb1efa81fa9739985136ad
   git: https://github.com/schirp-dso/source-constraints
 local-bin-path: bin
 packages:
