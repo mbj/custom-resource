@@ -64,18 +64,18 @@ packages:
     commit: 792cda1dc3e51253264aa76eb984b932d428c683
 - completed:
     cabal-file:
-      size: 3382
-      sha256: 87a1f541a696eae81851726fe3ed3240e168fb9a0b790c2372763a7d86576941
+      size: 3656
+      sha256: c361c0eabc8252c24cd6aded38a7f8bf1cebc9290e7539a2042cbd2af8f139a9
     name: stack-deploy
     version: 0.0.0.1
     git: https://github.com/mbj/stack-deploy
     pantry-tree:
-      size: 835
-      sha256: bf8a98a6db1918a4a8f981584806717ecb838106a756002deb19ec8d77a50e9c
-    commit: 8333f1c0d639b2bb68ae1d6f1fed4101e2d705ad
+      size: 1027
+      sha256: cc67595855ddb5ce8972bd8b01be514d0314a4fd7f955f25729589bfbbaea592
+    commit: 012c382b2c83c9f734328e04b3e21ae7a6388f1f
   original:
     git: https://github.com/mbj/stack-deploy
-    commit: 8333f1c0d639b2bb68ae1d6f1fed4101e2d705ad
+    commit: 012c382b2c83c9f734328e04b3e21ae7a6388f1f
 - completed:
     cabal-file:
       size: 3161
