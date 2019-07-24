@@ -43,11 +43,11 @@ packages:
     git: https://github.com/mbj/lambda-haskell-runtime
     pantry-tree:
       size: 576
-      sha256: 368044a142437a6993e3a58d499f21ab58d0e7aa2dea0fa8ed2f6795c9347a77
-    commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
+      sha256: e3b9b48331939f20582849a521c8a84f2831bbece4620eb4be85c27f47eb394c
+    commit: 2da185044ac04b79a8a0094841029045f02235a3
   original:
     git: https://github.com/mbj/lambda-haskell-runtime
-    commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
+    commit: 2da185044ac04b79a8a0094841029045f02235a3
 - completed:
     cabal-file:
       size: 2328
