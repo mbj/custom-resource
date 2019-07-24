@@ -18,4 +18,4 @@ extra-deps:
 local-bin-path: bin
 packages:
 - .
-resolver: lts-13.28
+resolver: lts-13.29
