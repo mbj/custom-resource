@@ -3,18 +3,18 @@ build:
 extra-deps:
 - stratosphere-0.38.0
 - hal-0.3.0
-- commit: 33aa6b71309793829b534fb29f6532d71c32b106
-  git: https://github.com/mbj/amazonka
+- git: https://github.com/mbj/amazonka
+  commit: 33aa6b71309793829b534fb29f6532d71c32b106
   subdirs:
    - amazonka-cloudformation
-- commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
-  git: https://github.com/mbj/lambda-haskell-runtime
-- commit: 792cda1dc3e51253264aa76eb984b932d428c683
-  git: https://github.com/mbj/mprelude
-- commit: 012c382b2c83c9f734328e04b3e21ae7a6388f1f
-  git: https://github.com/mbj/stack-deploy
-- commit: c64f467f455f0632eeeb1efa81fa9739985136ad
-  git: https://github.com/schirp-dso/source-constraints
+- git: https://github.com/mbj/lambda-haskell-runtime
+  commit: 9b291c7ee9cfedb9a287ce9d9003d2b54da9466b
+- git: https://github.com/mbj/mprelude
+  commit: 792cda1dc3e51253264aa76eb984b932d428c683
+- git: https://github.com/mbj/stack-deploy
+  commit: 012c382b2c83c9f734328e04b3e21ae7a6388f1f
+- git: https://github.com/schirp-dso/source-constraints
+  commit: c64f467f455f0632eeeb1efa81fa9739985136ad
 local-bin-path: bin
 packages:
 - .
