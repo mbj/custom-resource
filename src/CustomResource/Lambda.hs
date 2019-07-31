@@ -1,6 +1,7 @@
 -- @see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref.html
 module CustomResource.Lambda
-  ( FromPhysicalResourceId(..)
+  ( Debug(..)
+  , FromPhysicalResourceId(..)
   , PhysicalResourceId(..)
   , Request
   , RequestHandler
@@ -40,6 +41,7 @@ import qualified AWS.Lambda.Runtime      as Lambda
 import qualified Data.Aeson              as JSON
 import qualified Data.Aeson.Types        as JSON
 import qualified Data.Map.Strict         as Map
+import qualified Data.Text.IO            as Text
 import qualified Network.HTTP.Client     as HTTP
 import qualified Network.HTTP.Client.TLS as HTTP
 
@@ -54,6 +56,7 @@ newtype PhysicalResourceId = PhysicalResourceId Text
 newtype ResourceProperties :: State -> * where
   ResourceProperties :: JSON.Object -> ResourceProperties a
   deriving newtype FromJSON
+  deriving stock   Show
 
 newtype ResourceType = ResourceType Text
   deriving newtype (Eq, FromJSON, Ord, Show, ToJSON, ToText)
@@ -126,6 +129,7 @@ data Request
       PhysicalResourceId
       (ResourceProperties 'New)
       (ResourceProperties 'Old)
+  deriving stock Show
 
 data RequestMetadata = RequestMetadata
   { logicalResourceId :: LogicalResourceId
@@ -135,7 +139,7 @@ data RequestMetadata = RequestMetadata
   , serviceToken      :: ServiceToken
   , stackId           :: StackId
   }
-  deriving stock    Generic
+  deriving stock (Generic, Show)
 
 instance FromJSON RequestMetadata where
   parseJSON = JSON.withObject "request metadata" $ \value -> do
@@ -214,20 +218,28 @@ instance ToJSON Response where
     , ("Status",             JSON.toJSON status)
     ]
 
-run :: MonadIO m => RequestHandler -> m ()
-run handlers = liftIO
-  (Lambda.ioRuntime . runtime handlers =<< HTTP.newTlsManager)
+data Debug = DoDebug | NoDebug
+
+run :: MonadIO m => Debug -> RequestHandler -> m ()
+run debug handlers = liftIO
+  (Lambda.ioRuntime . runtime debug handlers =<< HTTP.newTlsManager)
 
 runtime
-  :: RequestHandler
+  :: Debug
+  -> RequestHandler
   -> HTTP.Manager
   -> Request
   -> IO (Either String JSON.Value)
-runtime handlers manager request = do
+runtime debug handlers manager request = do
+  doDebug
   sendResponse manager (responseURL $ requestMetadata request) =<<
     withEnv (handleRequest handlers request)
 
   pure . Right $ JSON.toJSON True
+  where
+    doDebug = case debug of
+      DoDebug -> liftIO . Text.putStrLn . convertText $ show request
+      NoDebug -> pure ()
 
 handleRequest :: RequestHandler -> Request -> AWS Response
 handleRequest (RequestHandler handlers) request
