@@ -25,7 +25,7 @@ dependencies:
 - lifted-base             == 0.2.3.12
 - resourcet               == 1.2.2
 - source-constraints      == 0.0.0.1
-- stratosphere            == 0.38.0
+- stratosphere            == 0.42.0
 - text                    == 1.2.3.1
 - text-conversions        == 0.3.0
 - unliftio                == 0.2.11
