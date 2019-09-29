@@ -5,6 +5,41 @@
 
 packages:
 - completed:
+    hackage: amazonka-1.6.1@sha256:d863557379350ed6bbb91187abeb8c349a654f60b140d138710486f58ae7c476,3536
+    pantry-tree:
+      size: 992
+      sha256: 55747f9b56063ea1be73a962e1ce44528b9856e119e2d9f1238397b3112b6e70
+  original:
+    hackage: amazonka-1.6.1@sha256:d863557379350ed6bbb91187abeb8c349a654f60b140d138710486f58ae7c476,3536
+- completed:
+    hackage: amazonka-cognito-idp-1.6.1@sha256:3abc51305f47e13730c2d742036123a79a65bf57b4817dfa323b8143e98e2531,9289
+    pantry-tree:
+      size: 24852
+      sha256: 03a4e4c938f412a7de62c0681bca42fd0efd0e757be25dd32a6ebb1669435f02
+  original:
+    hackage: amazonka-cognito-idp-1.6.1@sha256:3abc51305f47e13730c2d742036123a79a65bf57b4817dfa323b8143e98e2531,9289
+- completed:
+    hackage: amazonka-core-1.6.1@sha256:9bc59ce403c6eeba3b3eaf3f10e5f0b6a33b6edbbf8f6de0dd6f4c67b86fa698,5135
+    pantry-tree:
+      size: 3438
+      sha256: c13e643176308771491ec0e06390e269047bb1b28be4535992842f7426a95eb4
+  original:
+    hackage: amazonka-core-1.6.1@sha256:9bc59ce403c6eeba3b3eaf3f10e5f0b6a33b6edbbf8f6de0dd6f4c67b86fa698,5135
+- completed:
+    hackage: amazonka-lambda-1.6.1@sha256:395f48418da98b6c8853c7751e08464eee7b9140683c0b6f19b54c4b21699b5d,4231
+    pantry-tree:
+      size: 7461
+      sha256: 5689d99657ec128bad74fa506524bc6c5c0309c6e90aeaf4197c317f8b39dbfc
+  original:
+    hackage: amazonka-lambda-1.6.1@sha256:395f48418da98b6c8853c7751e08464eee7b9140683c0b6f19b54c4b21699b5d,4231
+- completed:
+    hackage: amazonka-s3-1.6.1@sha256:9d07240fca59ad5197fb614ce3051e701e4951e6d4625a2dab4a9c17a1900194,6317
+    pantry-tree:
+      size: 18385
+      sha256: 5cab233d241615764d9fd6927bc397f02887154450a9932c38c2e17ea86d79bc
+  original:
+    hackage: amazonka-s3-1.6.1@sha256:9d07240fca59ad5197fb614ce3051e701e4951e6d4625a2dab4a9c17a1900194,6317
+- completed:
     hackage: stratosphere-0.42.0@sha256:745944b92e107cc2663e0e443ddd6455bf5371795eb1d4437af5d13d38ec18de,107989
     pantry-tree:
       size: 180353
@@ -37,17 +72,17 @@ packages:
 - completed:
     cabal-file:
       size: 3495
-      sha256: b7234b78440d23b54f11bb7569226de9b11a576d0a098608484c6fb0b794bb31
+      sha256: f348cad096da5787720ee59b1746bc396dd5b45ef87f375eb3cb8799a60cdbb5
     name: lambda-haskell-runtime
     version: 0.0.0.1
     git: https://github.com/mbj/lambda-haskell-runtime
     pantry-tree:
       size: 576
-      sha256: e3b9b48331939f20582849a521c8a84f2831bbece4620eb4be85c27f47eb394c
-    commit: 2da185044ac04b79a8a0094841029045f02235a3
+      sha256: 9fdbb144a2f1b65effac73aa0425a3047deed97631af4f0e196d9bd0e8d6563c
+    commit: c32181218d2ac89bb34274c196977f0116bf975a
   original:
     git: https://github.com/mbj/lambda-haskell-runtime
-    commit: 2da185044ac04b79a8a0094841029045f02235a3
+    commit: c32181218d2ac89bb34274c196977f0116bf975a
 - completed:
     cabal-file:
       size: 2328
@@ -78,21 +113,21 @@ packages:
     commit: 80d96ec1e9d4fca6f75c58f2c8d70d021890700c
 - completed:
     cabal-file:
-      size: 3161
-      sha256: 27686d6937738c748cbd601df14ce9ce2f8ebbc7a2719a4149e797bccf430b2d
+      size: 3339
+      sha256: 6e9eac89be5297683a9335262424a7e68452bf53b22ca94ebc731476346e758f
     name: source-constraints
     version: 0.0.0.1
     git: https://github.com/schirp-dso/source-constraints
     pantry-tree:
       size: 914
-      sha256: bbbf2645210c101715bafff85de9cf6ce16dfebf6ca5f189ed2a8c5124878e22
-    commit: 008e5ce4a6660e2f35924b019272803206e01cb2
+      sha256: a74730d61617df24560945f00faf769e6b68cf216a6cd048f660c583c4ae9b8f
+    commit: 3eea6c0c3c4c66c39e1b68a5a27e74554395699d
   original:
     git: https://github.com/schirp-dso/source-constraints
-    commit: 008e5ce4a6660e2f35924b019272803206e01cb2
+    commit: 3eea6c0c3c4c66c39e1b68a5a27e74554395699d
 snapshots:
 - completed:
-    size: 500539
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/29.yaml
-    sha256: 006398c5e92d1d64737b7e98ae4d63987c36808814504d1451f56ebd98093f75
-  original: lts-13.29
+    size: 523700
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/7.yaml
+    sha256: 8e3f3c894be74d71fa4bf085e0a8baae7e4d7622d07ea31a52736b80f8b9bb1a
+  original: lts-14.7
