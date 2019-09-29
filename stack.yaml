@@ -1,6 +1,11 @@
 build:
   haddock: false
 extra-deps:
+- amazonka-1.6.1@sha256:d863557379350ed6bbb91187abeb8c349a654f60b140d138710486f58ae7c476,3536
+- amazonka-cognito-idp-1.6.1@sha256:3abc51305f47e13730c2d742036123a79a65bf57b4817dfa323b8143e98e2531,9289
+- amazonka-core-1.6.1@sha256:9bc59ce403c6eeba3b3eaf3f10e5f0b6a33b6edbbf8f6de0dd6f4c67b86fa698,5135
+- amazonka-lambda-1.6.1@sha256:395f48418da98b6c8853c7751e08464eee7b9140683c0b6f19b54c4b21699b5d,4231
+- amazonka-s3-1.6.1@sha256:9d07240fca59ad5197fb614ce3051e701e4951e6d4625a2dab4a9c17a1900194,6317
 - stratosphere-0.42.0
 - hal-0.3.0
 - git: https://github.com/mbj/amazonka
@@ -8,14 +13,14 @@ extra-deps:
   subdirs:
    - amazonka-cloudformation
 - git: https://github.com/mbj/lambda-haskell-runtime
-  commit: 2da185044ac04b79a8a0094841029045f02235a3
+  commit: c32181218d2ac89bb34274c196977f0116bf975a
 - git: https://github.com/mbj/mprelude
   commit: 5708d9ce9b417362e0c79cbd7b48d892e7f7f32a
 - git: https://github.com/mbj/stack-deploy
   commit: 80d96ec1e9d4fca6f75c58f2c8d70d021890700c
 - git: https://github.com/schirp-dso/source-constraints
-  commit: 008e5ce4a6660e2f35924b019272803206e01cb2
+  commit: 3eea6c0c3c4c66c39e1b68a5a27e74554395699d
 local-bin-path: bin
 packages:
 - .
-resolver: lts-13.29
+resolver: lts-14.7
