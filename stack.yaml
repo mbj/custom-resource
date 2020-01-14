@@ -13,14 +13,14 @@ extra-deps:
   subdirs:
    - amazonka-cloudformation
 - git: https://github.com/mbj/lambda-haskell-runtime
-  commit: c32181218d2ac89bb34274c196977f0116bf975a
+  commit: a9c376fe28798fc2d1c484ff9213ce082d5ca375
 - git: https://github.com/mbj/mprelude
-  commit: 5708d9ce9b417362e0c79cbd7b48d892e7f7f32a
+  commit: 451e3c2bed257c42e45dfb00d66376285cfaa56f
 - git: https://github.com/mbj/stack-deploy
-  commit: 80d96ec1e9d4fca6f75c58f2c8d70d021890700c
+  commit: 27506fba7fb41ce9e8c8a9760c8a33158064d62c
 - git: https://github.com/schirp-dso/source-constraints
-  commit: 3eea6c0c3c4c66c39e1b68a5a27e74554395699d
+  commit: 75ba67ba7a8853db3c2ca22c5db10dbe883e1dae
 local-bin-path: bin
 packages:
 - .
-resolver: lts-14.7
+resolver: lts-14.20
